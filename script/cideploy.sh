@@ -7,8 +7,8 @@ chmod 600 deploy_key.pem
 mkdir ~/.ssh
 cp deploy_key.pem ~/.ssh/id_rsa
 ssh-add deploy_key.pem
-#ssh-keyscan playbookstest-rhtconsulting.rhcloud.com >> ~/.ssh/known_hosts
-#ssh-keyscan github.com >> ~/.ssh/known_hosts
+ssh-keyscan playbookstest-rhtconsulting.rhcloud.com >> ~/.ssh/known_hosts
+ssh-keyscan github.com >> ~/.ssh/known_hosts
 cd _site/
 git config user.name "Travis"
 git config user.emal "noreply@redhat.com"
