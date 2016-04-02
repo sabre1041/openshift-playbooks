@@ -2,6 +2,9 @@ language: ruby
 rvm:
 - 2.2.0
 
+before_script:
+ - chmod +x ./script/*
+
 script: ./script/cibuild.sh
 
 after_success:
