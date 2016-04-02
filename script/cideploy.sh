@@ -1,8 +1,7 @@
 #!/bin/bash
 
 openssl aes-256-cbc -K $encrypted_4ffc634c0a1c_key -iv $encrypted_4ffc634c0a1c_iv -in .travis_id_rsa.enc -out deploy_key.pem -d
-ls -la
-eval '$(ssh-agent -s)'
+eval "$(ssh-agent -s)"
 chmod 600 deploy_key.pem
 mkdir ~/.ssh
 cp -f deploy_key.pem ~/.ssh/id_rsa
