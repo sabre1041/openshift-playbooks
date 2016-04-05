@@ -10,8 +10,6 @@ function generate_pr_statistics() {
     echo >> $file
     echo "Pull Request: ${TRAVIS_PULL_REQUEST}" >> $file
     git log ${TRAVIS_COMMIT_RANGE} -p >> $file
-    
-    cat ./_site/PR.txt
 
 }
 
@@ -32,6 +30,8 @@ echo "Pushing to ${git_repo} at host ${git_host}"
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     generate_pr_statistics
 fi
+
+echo "Running if statement"
 
 # Deploy site if slug is rhtconsulting/openshift-playbooks or on master branch and not PR
 if [ "$TRAVIS_REPO_SLUG" == "rhtconsulting/openshift-playbooks" ] && [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
