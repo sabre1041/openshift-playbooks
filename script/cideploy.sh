@@ -22,6 +22,12 @@ echo "Git Repository: ${git_repo}"
 echo "Git PR Commit Range: ${TRAVIS_COMMIT_RANGE}"
 echo "Git PR Commit Range Fix: ${TRAVIS_COMMIT_RANGE/.../..}"
 
+echo "Git Pull Request Number: ${TRAVIS_PULL_REQUEST}"
+
+echo "Git Files Changes..."
+echo
+echo $(git diff --name-only ${TRAVIS_COMMIT_RANGE})
+
 
 # Deploy site if on master branch and not PR
 if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
