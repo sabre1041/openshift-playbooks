@@ -1,10 +1,14 @@
 #!/bin/bash
 
 
-function generate_statistics() {
+function generate_pr_statistics() {
    
-    echo "Pull Request: ${TRAVIS_PULL_REQUEST}"
-    echo "Pull Request Commit Range: ${TRAVIS_PULL_REQUEST}"
+    file="./_site/PR.txt"
+    echo "Generating statistics "
+   
+    echo "*** Pull Request Statistics ***\n\n" >> $file
+    echo "Pull Request: ${TRAVIS_PULL_REQUEST}\n\n" >> $file
+    echo $(git log ${TRAVIS_COMMIT_RANGE} -p) >> $file
 
 }
 
@@ -18,23 +22,13 @@ else
     git_host=$git_host_test
 fi
 
-echo "Git Repository: ${git_repo}"
-echo "Git PR Commit Range: ${TRAVIS_COMMIT_RANGE}"
-echo "Git PR Commit Range Fix: ${TRAVIS_COMMIT_RANGE/.../..}"
-
-echo "Git Pull Request Number: ${TRAVIS_PULL_REQUEST}"
-
-echo "Git Files Changes..."
-echo
-echo $(git diff --name-only ${TRAVIS_COMMIT_RANGE})
-
 
 # Deploy site if on master branch and not PR
 if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     
     # If Pull Request, Create Statistics
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-        generate_statistics
+        generate_pr_statistics
     fi
     
     # Decrypt private key
