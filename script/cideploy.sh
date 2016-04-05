@@ -4,11 +4,13 @@
 function generate_pr_statistics() {
    
     file="./_site/PR.txt"
-    echo "Generating statistics "
+    echo "Generating statistics for pull request..."
    
     echo "*** Pull Request Statistics ***\n\n" >> $file
     echo "Pull Request: ${TRAVIS_PULL_REQUEST}\n\n" >> $file
     echo $(git log ${TRAVIS_COMMIT_RANGE} -p) >> $file
+    
+    cat "./_site/PR.txt"
 
 }
 
@@ -23,13 +25,15 @@ else
 fi
 
 
-# Deploy site if on master branch and not PR
-if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-    
-    # If Pull Request, Create Statistics
-    if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-        generate_pr_statistics
-    fi
+echo "Pushing to ${git_repo} at host ${git_host}"
+
+# If Pull Request, Create Statistics
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+    generate_pr_statistics
+fi
+
+# Deploy site if slug is rhtconsulting/openshift-playbooks or on master branch and not PR
+if [ "$TRAVIS_REPO_SLUG" == "rhtconsulting/openshift-playbooks" ] && [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     
     # Decrypt private key
     openssl aes-256-cbc -K $encrypted_4ffc634c0a1c_key -iv $encrypted_4ffc634c0a1c_iv -in .travis_id_rsa.enc -out deploy_key.pem -d
