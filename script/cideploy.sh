@@ -5,12 +5,13 @@ function generate_pr_statistics() {
    
     file="./_site/PR.txt"
     echo "Generating statistics for pull request..."
-   
-    echo "*** Pull Request Statistics ***\n\n" >> $file
-    echo "Pull Request: ${TRAVIS_PULL_REQUEST}\n\n" >> $file
-    echo $(git log ${TRAVIS_COMMIT_RANGE} -p) >> $file
+    echo >> $file
+    echo "*** Pull Request Statistics ***" >> $file
+    echo >> $file
+    echo "Pull Request: ${TRAVIS_PULL_REQUEST}" >> $file
+    git log ${TRAVIS_COMMIT_RANGE} -p >> $file
     
-    cat "./_site/PR.txt"
+    cat ./_site/PR.txt
 
 }
 
