@@ -1,0 +1,86 @@
+---
+---
+= Monitoring OpenShift Using Prometheus
+Andrew Block <ablock@redhat.com>
+v1.0, 2017-09-17
+:scripts_repo: https://github.com/redhat-cop/openshift-toolkit
+:toc: macro
+:toc-title:
+
+Monitoring the OpenShift Container Platform using the Prometheus time series database and related tools.
+
+toc::[]
+
+== Overview
+
+There are a variety of tools and products that can be used to monitor OpenShift. Many popular monitoring tools, such as link:https://www.nagios.com[Naigos] or link:https://www.zabbix.com/[Zabbix], leverage a agent/server model where agents installed on each machine communicate with a centralized server. However, as architecutres have evolved and become more dynamic, there has been a desire to leverage an alternative model that did not require the use of agents.
+
+One of the most popular monitoring solutions that has been adopted by many utilizing cloud technologies is link:https://prometheus.io[Prometheus]. Prometheus is an open source monitoring and alerting toolkit and epitomizes the architectural departure from the traditional agent monitoring model. Instead of agents pushing metrics to a centralized server in a push manner, Prometheus polls from a set of static or dynamically configured endpoints that expose metrics using a well known format. The results are then stored within a time series database for optomized storage and robust querying. 
+
+== Architecture
+
+Prometheus contains an ecosystem of components that when used in conjunction with each other, provides a production grade monitoring solutions built for today's most complex environments. 
+
+image::https://prometheus.io/assets/architecture.svg[]
+
+**Prometheus Server**
+
+At the core is the _Prometheus Server_. It is responsible for querying endpoints that are statically defined or dynamically discovered along with storing the results. Also provided is PromQL, a functional expression language, that can be used to query results that have been stored in the Prometheus database. 
+
+**AlertManager**
+
+Handles alerts sent by clients (most notibly the Prometheus Server) and takes care of deduplicating, grouping, and routing them to an appropriate receiver, such as an email server.
+
+**Pushgateway**
+
+In certain cases, it may not be possible for the Prometheus server to reliably communicate to an endpoint for metrics collection, such as for short lived applications that will not be queried by the Prometheus server or ones that may reside behind a firewall. The Pushgateway is an application that can expose metrics to the Prometheus server for which applications can push their metrics towards. 
+
+**Node Exporter**
+
+HTTP based endpoints that expose Prometheus compliant metrics for scraping by the Prometheus server. Example of a node exporter can provide system resource information such as available memory and CPU utilization.
+
+== Configuration
+
+The Prometheus server is configured via command line arguments along with a yaml based configuration file. The configuration file is the driver behind the endpoints that is to be monitored along with criteria for which notifications can be produced, amongst others.
+
+[source:yaml]
+----
+global:
+  # How frequently to scrape targets by default.
+  [ scrape_interval: <duration> | default = 1m ]
+
+  # How long until a scrape request times out.
+  [ scrape_timeout: <duration> | default = 10s ]
+
+  # How frequently to evaluate rules.
+  [ evaluation_interval: <duration> | default = 1m ]
+
+  # The labels to add to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    [ <labelname>: <labelvalue> ... ]
+
+# Rule files specifies a list of globs. Rules and alerts are read from
+# all matching files.
+rule_files:
+  [ - <filepath_glob> ... ]
+
+# A list of scrape configurations.
+scrape_configs:
+  [ - <scrape_config> ... ]
+
+# Alerting specifies settings related to the Alertmanager.
+alerting:
+  alert_relabel_configs:
+    [ - <relabel_config> ... ]
+  alertmanagers:
+    [ - <alertmanager_config> ... ]
+
+# Settings related to the experimental remote write feature.
+remote_write:
+  [ - <remote_write> ... ]
+
+# Settings related to the experimental remote read feature.
+remote_read:
+  [ - <remote_read> ... ]
+----
